@@ -9,35 +9,29 @@ A simple AI-powered sentiment analysis tool that detects moods from text input u
 
 🛠 Tech Stack
 Backend: FastAPI (for sentiment analysis API)
-
 Frontend: Streamlit (for user interaction)
-
 NLP: NLTK (VADER sentiment analysis)
-
 API Communication: Requests
 
-## 🚀 Setup
+## 📌 Installation & Setup
+1️⃣ Clone the Repository
+   ```
+   git clone https://github.com/yourusername/ai-mood-tracker.git
+   cd ai-mood-tracker
+   ```
+2️⃣ Install Dependencies
+   ```pip install fastapi streamlit nltk requests pillow uvicorn```
+3️⃣ Run the FastAPI Backend
+   ```uvicorn main:app --reload```
+It should run on http://127.0.0.1:8000
+4️⃣ Run the Streamlit Frontend
+   ```streamlit run app.py``
+It should open in your browser.
 
-1. **Clone the repo**  
-   ```sh
-   git clone https://github.com/mruna18/AI-Powered_MoodTracker.git
-   cd AI-Powered_MoodTracker
-2. ** Create and activate a virtual environment
-    ```sh
-    python -m venv myenv
-    myenv\Scripts\activate
+🔬 How It Works
+- User enters text in the Streamlit app.
+- FastAPI backend processes the text using NLTK's SentimentIntensityAnalyzer.
+- Mood is determined as Positive 😃, Negative 😢, or Neutral 😐.
+- Result is displayed with an emoji in the UI.
 
-3. Install dependencies
-    ```sh
-   pip install -r requirements.txt
-
-4.Run the API
-    ```sh
-    uvicorn main:app --reload
-    
-📌 Endpoints
-Method	Endpoint	Description
-POST	/analyze	Analyze text sentiment
-GET	/history	Get past mood records
-More features coming soon! 🚧
 
