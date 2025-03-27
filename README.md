@@ -1,6 +1,20 @@
-# AI-Powered Mood Tracker API
+# AI-Powered Mood Tracker🎭
 
-A FastAPI-based project for analyzing user mood using sentiment analysis.
+A simple AI-powered sentiment analysis tool that detects moods from text input using FastAPI, Streamlit, and NLP (VADER Sentiment Analysis).
+
+🚀 Features
+✅ Real-time sentiment analysis (Positive, Negative, Neutral)
+✅ User-friendly web interface with emojis
+✅ Lightweight and easy to set up
+
+🛠 Tech Stack
+Backend: FastAPI (for sentiment analysis API)
+
+Frontend: Streamlit (for user interaction)
+
+NLP: NLTK (VADER sentiment analysis)
+
+API Communication: Requests
 
 ## 🚀 Setup
 
@@ -8,10 +22,10 @@ A FastAPI-based project for analyzing user mood using sentiment analysis.
    ```sh
    git clone https://github.com/mruna18/AI-Powered_MoodTracker.git
    cd AI-Powered_MoodTracker
-2. ** Create and activate a viretual envirnoment
+2. ** Create and activate a virtual environment
     ```sh
     python -m venv myenv
-    source myenv/bin/activate  # Windows: myenv\Scripts\activate
+    myenv\Scripts\activate
 
 3. Install dependencies
     ```sh
