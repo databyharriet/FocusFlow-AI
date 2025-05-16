@@ -23,7 +23,7 @@ API Communication: Requests
 ## 📌 Installation & Setup
 1️⃣ Clone the Repository
    ```
-   git clone https://github.com/yourusername/ai-mood-tracker.git
+   git clone https://github.com/mruna18/ai-mood-tracker.git
    cd ai-mood-tracker
    ```
 2️⃣ Install Dependencies
