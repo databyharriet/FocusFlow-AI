@@ -1,52 +1,66 @@
-# 🧠 FocusFlow AI
+# 📌 FocusFlow AI
 
-Your personal clarity and productivity assistant — built with Streamlit.
+A mental clarity and productivity assistant powered by AI. FocusFlow AI helps you track your mood, habits, and journaling activities with interactive dashboards, AI mood analysis, and productivity insights — all in one Streamlit web app.
 
-## 🚀 Features
-
-✅ AI Mood Analyzer (NLP powered)  
-✅ Guided Journaling with downloads (CSV, PDF)  
-✅ Habit Tracker (Sleep & Productivity levels)  
-✅ Burnout Risk Checker  
-✅ Data Dashboard with habit visualizations  
-✅ Custom Themes (colors, fonts)  
-✅ Motivational AI Tips
+## 🚀 Live Demo
+👉 [Launch the App on Streamlit](https://focusflow-ai-5irs3nxlnotuyafydyx3si.streamlit.app)
 
 ---
 
-## 💻 How to Run Locally
+## 💡 Features
+
+- ✅ AI-Powered Mood Analysis (using NLP models)
+- ✅ Daily Journal Entries with Sentiment Scoring
+- ✅ Habit Tracking System (Productivity & Sleep)
+- ✅ Data Dashboard for Weekly & Monthly Overviews
+- ✅ Downloadable Reports (CSV/PDF)
+- ✅ Fully Responsive UI using Streamlit
+
+---
+
+## 🛠️ Tech Stack
+
+- **Streamlit** for the interactive web app
+- **HuggingFace Transformers** for mood analysis
+- **Pandas** for data manipulation
+- **Matplotlib & Altair** for data visualization
+- **FPDF** for report downloads
+
+---
+
+## 📂 Folder Structure
+FocusFlow AI/
+│
+├── app.py # Main Streamlit app
+├── app/
+│ └── utils.py # Custom utilities for mood analysis
+├── habit_data/ # Habit log CSV files
+├── journal_entries/ # Saved journal text entries
+├── requirements.txt # Python dependencies
+└── README.md # Project documentati
+
+---
+
+## ⚙️ Local Development
 
 ```bash
-git clone https://github.com/YourUsername/FocusFlowAI.git
-cd "FocusFlow AI"
+# Clone the repo
+git clone https://github.com/databyharriet/focusflow-ai.git
+cd focusflow-ai
+
+# Create and activate virtual environment
 python -m venv venv
-venv\Scripts\activate  # On Windows
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Mac/Linux
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Run Streamlit app
 streamlit run app.py
-Deployment
-This app is designed for Streamlit Cloud:
 
-Connect your GitHub repo
-
-Main file: app.py
-
-It will automatically deploy!
-
-📌 Author
-Built with ❤️ by Mercy Jacob
-
-yaml
-Copy
-Edit
-
----
-
-## ✅ 3. Final Git Commands ✅
-
-```bash
-git init
-git add .
-git commit -m "🎉 Initial commit of FocusFlow AI app"
-git remote add origin https://github.com/YourUsername/FocusFlowAI.git
-git branch -M main
-git push -u origin main
+🖥️ Deployment
+FocusFlow AI is deployed on Streamlit Cloud.
+You can fork the repository and deploy your own version by linking it to Streamlit.
+📧 Contact
+For inquiries or collaborations, reach out on GitHub: @databyharriet
