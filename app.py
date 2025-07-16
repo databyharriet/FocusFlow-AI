@@ -9,22 +9,6 @@ from fpdf import FPDF
 from app.utils import analyze_mood as analyze_mood_nltk
 
 # ────────────────────
-# User Login
-# ────────────────────
-
-if "username" not in st.session_state:
-    username = st.text_input("Enter your username to start:")
-    if username:
-        st.session_state["username"] = username.strip()
-        st.experimental_rerun()
-    else:
-        st.stop()  # stop here until username entered
-else:
-    username = st.session_state["username"]
-
-st.sidebar.write(f"👋 Welcome, **{username}**!")
-
-# ────────────────────
 # AI Tip Generator
 # ────────────────────
 
@@ -64,42 +48,35 @@ def analyze_mood(text):
         return "negative"
 
 # ────────────────────
-# Utilities with user-based storage
+# Utilities
 # ────────────────────
 
 def get_safe_timestamp():
     return datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-def user_journal_dir():
-    path = f"journal_entries/{username}"
-    os.makedirs(path, exist_ok=True)
-    return path
-
-def user_habit_file():
-    path = f"habit_data/habit_log_{username}.csv"
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    return path
-
-def save_journal(entry, timestamp):
-    path = os.path.join(user_journal_dir(), f"{timestamp}.txt")
-    with open(path, "w", encoding="utf-8") as f:
+def save_journal(username, entry, timestamp):
+    user_folder = f"journal_entries/{username}"
+    os.makedirs(user_folder, exist_ok=True)
+    with open(f"{user_folder}/{timestamp}.txt", "w", encoding="utf-8") as f:
         f.write(entry)
 
-def delete_journal(timestamp):
-    path = os.path.join(user_journal_dir(), f"{timestamp}.txt")
+def delete_journal(username, timestamp):
+    path = f"journal_entries/{username}/{timestamp}.txt"
     if os.path.exists(path):
         os.remove(path)
 
-def log_habit(timestamp, habit, sleep, productivity):
-    file = user_habit_file()
+def log_habit(username, timestamp, habit, sleep, productivity):
+    user_folder = f"habit_data/{username}"
+    os.makedirs(user_folder, exist_ok=True)
+    file = f"{user_folder}/habit_log.csv"
     new = pd.DataFrame([{"timestamp": timestamp, "habit": habit, "sleep_hours": sleep, "productivity_level": productivity}])
     if os.path.exists(file):
         old = pd.read_csv(file)
         new = pd.concat([old, new], ignore_index=True)
     new.to_csv(file, index=False)
 
-def delete_habit(timestamp):
-    file = user_habit_file()
+def delete_habit(username, timestamp):
+    file = f"habit_data/{username}/habit_log.csv"
     if os.path.exists(file):
         df = pd.read_csv(file)
         df = df[df['timestamp'] != timestamp]
@@ -187,148 +164,159 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-menu = st.sidebar.radio("📌 Menu", ["Mood Analyzer", "Daily Journal", "Habit Tracker", "Burnout Checker", "Data Dashboard", "Reminder (Coming Soon)", "About"])
-
 # ────────────────────
-# Mood Analyzer
+# User Authentication (simple username)
 # ────────────────────
 
-if menu == "Mood Analyzer":
-    st.title("😌 Mood Analyzer")
-    mood_input = st.text_area("How are you feeling today?")
-    st.info(f"💡 AI Tip: {generate_ai_tip()}")
-    if st.button("Analyze Mood") and mood_input.strip():
-        mood = analyze_mood(mood_input)
-        st.success(f"Your mood is **{mood.upper()}**")
+if 'username' not in st.session_state:
+    username_input = st.text_input("Enter your name to start:")
+    if st.button("Submit") and username_input.strip():
+        st.session_state['username'] = username_input.strip()
+        st.experimental_rerun()
+else:
+    st.sidebar.markdown(f"### 👋 Welcome, {st.session_state['username'].title()}!")
 
-# ────────────────────
-# Daily Journal
-# ────────────────────
+    menu = st.sidebar.radio("📌 Menu", ["Mood Analyzer", "Daily Journal", "Habit Tracker", "Burnout Checker", "Data Dashboard", "Reminders (Coming Soon)", "About"])
 
-elif menu == "Daily Journal":
-    st.title("📓 Daily Journal")
-    entry = st.text_area("Write your journal:")
-    timestamp = get_safe_timestamp()
-    if st.button("💾 Save Entry") and entry.strip():
-        save_journal(entry, timestamp)
-        st.success(f"Saved at {timestamp}")
-    files = sorted(os.listdir(user_journal_dir())) if os.path.exists(user_journal_dir()) else []
-    journal_data = []
-    for f in files:
-        ts = f.replace(".txt", "")
-        with open(os.path.join(user_journal_dir(), f), encoding="utf-8") as file:
-            text = file.read()
-        journal_data.append({"timestamp": ts, "content": text})
-        with st.expander(f"🗕️ {ts}"):
-            st.write(text)
-            if st.button(f"❌ Delete", key=ts):
-                delete_journal(ts)
-                st.success(f"Deleted {ts}")
-                st.experimental_rerun()
-    if journal_data:
-        jdf = pd.DataFrame(journal_data)
-        st.download_button("📥 Download Journals CSV", jdf.to_csv(index=False), file_name=f"journal_entries_{username}.csv")
-        if st.button("📥 Download Journals PDF"):
-            generate_pdf(jdf, f"journal_entries_{username}.pdf", "Journal Entries")
-            st.success("Journal PDF created!")
+    # ────────────────────
+    # Mood Analyzer
+    # ────────────────────
 
-# ────────────────────
-# Habit Tracker
-# ────────────────────
+    if menu == "Mood Analyzer":
+        st.title("😌 Mood Analyzer")
+        mood_input = st.text_area("How are you feeling today?")
+        st.info(f"💡 AI Tip: {generate_ai_tip()}")
+        if st.button("Analyze Mood") and mood_input.strip():
+            mood = analyze_mood(mood_input)
+            st.success(f"Your mood is **{mood.upper()}**")
 
-elif menu == "Habit Tracker":
-    st.title("✅ Habit Tracker")
-    habit = st.text_input("What habit did you practice today?")
-    sleep = st.slider("🛌 Sleep hours", 0, 12, 7)
-    prod = st.slider("⚙️ Productivity", 0, 10, 5)
-    timestamp = get_safe_timestamp()
-    if st.button("📈 Log Habit") and habit.strip():
-        log_habit(timestamp, habit, sleep, prod)
-        st.success("Habit logged")
-    file = user_habit_file()
-    if os.path.exists(file):
-        df = pd.read_csv(file)
-        st.subheader("📂 Recent Habit Logs")
-        for index, row in df.tail(10).iterrows():
-            with st.expander(f"🕒 {row['timestamp']}"):
-                st.write(f"Habit: {row['habit']} | Sleep: {row['sleep_hours']} hrs | Productivity: {row['productivity_level']}/10")
-                if st.button(f"❌ Delete", key=row['timestamp']):
-                    delete_habit(row['timestamp'])
-                    st.success("Habit deleted")
+    # ────────────────────
+    # Daily Journal
+    # ────────────────────
+
+    elif menu == "Daily Journal":
+        st.title("📓 Daily Journal")
+        entry = st.text_area("Write your journal:")
+        timestamp = get_safe_timestamp()
+        if st.button("💾 Save Entry") and entry.strip():
+            save_journal(st.session_state['username'], entry, timestamp)
+            st.success(f"Saved at {timestamp}")
+        user_journal_folder = f"journal_entries/{st.session_state['username']}"
+        files = sorted(os.listdir(user_journal_folder)) if os.path.exists(user_journal_folder) else []
+        journal_data = []
+        for f in files:
+            ts = f.replace(".txt", "")
+            with open(f"{user_journal_folder}/{f}", encoding="utf-8") as file:
+                text = file.read()
+            journal_data.append({"timestamp": ts, "content": text})
+            with st.expander(f"🗕️ {ts}"):
+                st.write(text)
+                if st.button(f"❌ Delete", key=ts):
+                    delete_journal(st.session_state['username'], ts)
+                    st.success(f"Deleted {ts}")
                     st.experimental_rerun()
-        st.download_button("📥 Download Habits CSV", df.to_csv(index=False), file_name=f"habit_log_{username}.csv")
-        if st.button("📥 Download Habits PDF"):
-            generate_pdf(df, f"habit_log_{username}.pdf", "Habit Logs")
-            st.success("Habit PDF created!")
+        if journal_data:
+            jdf = pd.DataFrame(journal_data)
+            st.download_button("📥 Download Journals CSV", jdf.to_csv(index=False), file_name="journal_entries.csv")
+            if st.button("📥 Download Journals PDF"):
+                generate_pdf(jdf, "journal_entries.pdf", "Journal Entries")
+                st.success("Journal PDF created!")
 
-# ────────────────────
-# Burnout Checker
-# ────────────────────
+    # ────────────────────
+    # Habit Tracker
+    # ────────────────────
 
-elif menu == "Burnout Checker":
-    st.title("🔥 Burnout Risk Checker")
-    file = user_habit_file()
-    if os.path.exists(file):
-        df = pd.read_csv(file).tail(7)
-        avg_sleep = df["sleep_hours"].mean()
-        avg_prod = df["productivity_level"].mean()
-        score = (5 - avg_prod) + (6 - avg_sleep)
-        st.metric("Avg Sleep", f"{avg_sleep:.1f} hrs")
-        st.metric("Avg Productivity", f"{avg_prod:.1f}/10")
-        if score >= 6: st.error("🚨 High burnout risk")
-        elif score >= 4: st.warning("⚠️ Moderate burnout risk")
-        else: st.success("✅ Low burnout risk")
-    else: st.info("No habit data")
+    elif menu == "Habit Tracker":
+        st.title("✅ Habit Tracker")
+        habit = st.text_input("What habit did you practice today?")
+        sleep = st.slider("🛌 Sleep hours", 0, 12, 7)
+        prod = st.slider("⚙️ Productivity", 0, 10, 5)
+        timestamp = get_safe_timestamp()
+        if st.button("📈 Log Habit") and habit.strip():
+            log_habit(st.session_state['username'], timestamp, habit, sleep, prod)
+            st.success("Habit logged")
+        user_habit_file = f"habit_data/{st.session_state['username']}/habit_log.csv"
+        if os.path.exists(user_habit_file):
+            df = pd.read_csv(user_habit_file)
+            st.subheader("📂 Recent Habit Logs")
+            for index, row in df.tail(10).iterrows():
+                with st.expander(f"🕒 {row['timestamp']}"):
+                    st.write(f"Habit: {row['habit']} | Sleep: {row['sleep_hours']} hrs | Productivity: {row['productivity_level']}/10")
+                    if st.button(f"❌ Delete", key=row['timestamp']):
+                        delete_habit(st.session_state['username'], row['timestamp'])
+                        st.success("Habit deleted")
+                        st.experimental_rerun()
+            st.download_button("📥 Download Habits CSV", df.to_csv(index=False), file_name="habit_log.csv")
+            if st.button("📥 Download Habits PDF"):
+                generate_pdf(df, "habit_log.pdf", "Habit Logs")
+                st.success("Habit PDF created!")
 
-# ────────────────────
-# Data Dashboard
-# ────────────────────
+    # ────────────────────
+    # Burnout Checker
+    # ────────────────────
 
-elif menu == "Data Dashboard":
-    st.title("📊 Data Dashboard")
-    file = user_habit_file()
-    if os.path.exists(file):
-        df = pd.read_csv(file)
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors='coerce')
-        st.subheader("📊 Average Productivity per Habit")
-        habit_summary = df.groupby("habit")[["productivity_level", "sleep_hours"]].mean().sort_values("productivity_level", ascending=False)
-        metric = st.selectbox("Choose metric:", ["productivity_level", "sleep_hours"])
-        st.bar_chart(habit_summary[metric])
-    else:
-        st.info("No habit data")
+    elif menu == "Burnout Checker":
+        st.title("🔥 Burnout Risk Checker")
+        user_habit_file = f"habit_data/{st.session_state['username']}/habit_log.csv"
+        if os.path.exists(user_habit_file):
+            df = pd.read_csv(user_habit_file).tail(7)
+            avg_sleep = df["sleep_hours"].mean()
+            avg_prod = df["productivity_level"].mean()
+            score = (5 - avg_prod) + (6 - avg_sleep)
+            st.metric("Avg Sleep", f"{avg_sleep:.1f} hrs")
+            st.metric("Avg Productivity", f"{avg_prod:.1f}/10")
+            if score >= 6: st.error("🚨 High burnout risk")
+            elif score >= 4: st.warning("⚠️ Moderate burnout risk")
+            else: st.success("✅ Low burnout risk")
+        else:
+            st.info("No habit data")
 
-# ────────────────────
-# Reminder (Coming Soon)
-# ────────────────────
+    # ────────────────────
+    # Data Dashboard
+    # ────────────────────
 
-elif menu == "Reminder (Coming Soon)":
-    st.title("⏳ Reminder")
-    st.info("🚧 This feature is still under construction. Coming soon!")
+    elif menu == "Data Dashboard":
+        st.title("📊 Data Dashboard")
+        user_habit_file = f"habit_data/{st.session_state['username']}/habit_log.csv"
+        if os.path.exists(user_habit_file):
+            df = pd.read_csv(user_habit_file)
+            df["timestamp"] = pd.to_datetime(df["timestamp"], errors='coerce')
+            st.subheader("📊 Average Productivity per Habit")
+            habit_summary = df.groupby("habit")[["productivity_level", "sleep_hours"]].mean().sort_values("productivity_level", ascending=False)
+            metric = st.selectbox("Choose metric:", ["productivity_level", "sleep_hours"])
+            st.bar_chart(habit_summary[metric])
+        else:
+            st.info("No habit data")
 
-# ────────────────────
-# About
-# ────────────────────
+    # ────────────────────
+    # Reminders (Coming Soon)
+    # ────────────────────
 
-elif menu == "About":
-    st.title("ℹ️ About FocusFlow AI")
-    st.markdown("""
-    **FocusFlow AI** is your personal clarity assistant.
+    elif menu == "Reminders (Coming Soon)":
+        st.title("⏳ Reminders")
+        st.info("This feature is coming soon. We're working on it! Stay tuned. 😊")
 
-    ✅ Journal your thoughts
+    # ────────────────────
+    # About
+    # ────────────────────
 
-    ✅ Track sleep & productivity
+    elif menu == "About":
+        st.title("ℹ️ About FocusFlow AI")
+        st.markdown("""
+        **FocusFlow AI** is your personal clarity assistant.
 
-    ✅ AI mood analysis
+        ✅ Journal your thoughts
 
-    ✅ Burnout prevention
+        ✅ Track sleep & productivity
+        
+        ✅ AI mood analysis
+        
+        ✅ Burnout prevention
+        
+        ✅ Data insights
 
-    ✅ Data insights
+        Built with ❤️ by Mercy Jacob
+        """)
 
-    Built with ❤️ by Mercy Jacob
-    """)
-
-st.markdown(...)
-
-st.markdown("<div style='text-align:center'>Built with ❤️ by Mercy Jacob</div>", unsafe_allow_html=True)
-
+    st.markdown("---")
+    st.markdown("<div style='text-align:center'>Built with ❤️ by Mercy Jacob</div>", unsafe_allow_html=True)
