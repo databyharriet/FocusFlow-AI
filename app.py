@@ -164,7 +164,7 @@ st.markdown(
 )
 
 
-menu = st.sidebar.radio("📌 Menu", ["Mood Analyzer", "Daily Journal", "Habit Tracker", "Burnout Checker", "Data Dashboard", "About"])
+menu = st.sidebar.radio("📌 Menu", ["Mood Analyzer", "Daily Journal", "Habit Tracker", "Burnout Checker", "Data Dashboard", "Reminder", "About"])
 
 # ────────────────────
 # Mood Analyzer
@@ -201,7 +201,7 @@ elif menu == "Daily Journal":
             if st.button(f"❌ Delete", key=ts):
                 delete_journal(ts)
                 st.success(f"Deleted {ts}")
-                st.rerun()
+                st.experimental_rerun()
     if journal_data:
         jdf = pd.DataFrame(journal_data)
         st.download_button("📥 Download Journals CSV", jdf.to_csv(index=False), file_name="journal_entries.csv")
@@ -232,7 +232,7 @@ elif menu == "Habit Tracker":
                 if st.button(f"❌ Delete", key=row['timestamp']):
                     delete_habit(row['timestamp'])
                     st.success("Habit deleted")
-                    st.rerun()
+                    st.experimental_rerun()
         st.download_button("📥 Download Habits CSV", df.to_csv(index=False), file_name="habit_log.csv")
         if st.button("📥 Download Habits PDF"):
             generate_pdf(df, "habit_log.pdf", "Habit Logs")
@@ -272,6 +272,14 @@ elif menu == "Data Dashboard":
         st.bar_chart(habit_summary[metric])
     else:
         st.info("No habit data")
+
+# ────────────────────
+# Reminder (Coming Soon)
+# ────────────────────
+
+elif menu == "Reminder":
+    st.title("⏰ Reminder")
+    st.info("🚧 Reminder feature is coming soon! We're still building this part of the app. Stay tuned!")
 
 # ────────────────────
 # About
