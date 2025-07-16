@@ -109,15 +109,38 @@ with st.sidebar.expander("🎨 Theme Settings", expanded=False):
         index=0,
     )
 
+# ✅ Now, the style block comes AFTER defining the variables
 st.markdown(
     f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family={font_family.replace(" ", "+")}&display=swap');
+
     html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], [data-testid="block-container"], .main {{
         font-family: '{font_family}', sans-serif !important;
         color: {text_color} !important;
         background-color: {bg_color} !important;
     }}
+
+    * {{
+        font-family: '{font_family}', sans-serif !important;
+        color: {text_color} !important;
+    }}
+
+    input, textarea, select, button, label {{
+        font-family: '{font_family}', sans-serif !important;
+        color: {text_color} !important;
+    }}
+
+    .stMarkdown, .stText, .stTitle, .stHeader, .stSubheader, .stCaption, .stMetric, .stDataFrame, .stTable {{
+        font-family: '{font_family}', sans-serif !important;
+        color: {text_color} !important;
+    }}
+
+    [data-testid="stSidebarContent"] *, .sidebar-content, .sidebar-section {{
+        font-family: '{font_family}', sans-serif !important;
+        color: {text_color} !important;
+    }}
+
     .stButton>button {{
         background-color: {accent_color} !important;
         color: white !important;
@@ -129,6 +152,7 @@ st.markdown(
     .stButton>button:hover {{
         filter: brightness(1.1);
     }}
+
     footer {{ visibility: hidden; }}
     </style>
     """,
