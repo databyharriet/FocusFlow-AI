@@ -109,28 +109,15 @@ with st.sidebar.expander("🎨 Theme Settings", expanded=False):
         index=0,
     )
 
-# 🔤 Apply Theme
 st.markdown(
     f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family={font_family.replace(" ", "+")}&display=swap');
-
     html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], [data-testid="block-container"], .main {{
         font-family: '{font_family}', sans-serif !important;
         color: {text_color} !important;
         background-color: {bg_color} !important;
     }}
-
-    * {{
-        font-family: '{font_family}', sans-serif !important;
-        color: {text_color} !important;
-    }}
-
-    input, textarea, select, button, label {{
-        font-family: '{font_family}', sans-serif !important;
-        color: {text_color} !important;
-    }}
-
     .stButton>button {{
         background-color: {accent_color} !important;
         color: white !important;
@@ -142,7 +129,6 @@ st.markdown(
     .stButton>button:hover {{
         filter: brightness(1.1);
     }}
-
     footer {{ visibility: hidden; }}
     </style>
     """,
@@ -150,19 +136,27 @@ st.markdown(
 )
 
 # ────────────────────
-# Username Input (Session State)
+# User Authentication
 # ────────────────────
 
-username = st.text_input("👤 Enter your username to get started:")
-if username:
-    username = username.strip().lower()
-    st.session_state["username"] = username
-
-if "username" in st.session_state:
-    username = st.session_state["username"]
-    st.sidebar.markdown(f"### 👋 Welcome, {username.title()}!")
-else:
+if 'username' not in st.session_state:
+    username_input = st.text_input("Enter your name to start:", key="username_input")
+    if username_input:
+        st.session_state['username'] = username_input.strip().title()
+        st.experimental_rerun()
     st.stop()
+else:
+    username = st.session_state['username']
+    st.sidebar.markdown(f"### 👋 Welcome, {username}!")
+
+    menu = st.sidebar.radio("📌 Menu", [
+        "Mood Analyzer", "Daily Journal", "Habit Tracker",
+        "Burnout Checker", "Data Dashboard", "Reminders (Coming Soon)", "About"
+    ])
+
+    # App main sections would go here (same structure you had)
+    st.write(f"## Welcome {username}, your personal clarity assistant is ready ✨")
+
 
 # ────────────────────
 # Menu Navigation
