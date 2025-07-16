@@ -1,51 +1,52 @@
-# AI-Powered Mood Tracker🎭
+# 🧠 FocusFlow AI
 
-A simple AI-powered sentiment analysis tool that detects moods from text input using FastAPI, Streamlit, and NLP (VADER Sentiment Analysis).
+Your personal clarity and productivity assistant — built with Streamlit.
 
-🚀 Features : 
+## 🚀 Features
 
-✅ Real-time sentiment analysis (Positive, Negative, Neutral)
+✅ AI Mood Analyzer (NLP powered)  
+✅ Guided Journaling with downloads (CSV, PDF)  
+✅ Habit Tracker (Sleep & Productivity levels)  
+✅ Burnout Risk Checker  
+✅ Data Dashboard with habit visualizations  
+✅ Custom Themes (colors, fonts)  
+✅ Motivational AI Tips
 
-✅ User-friendly web interface with emojis
+---
 
-✅ Lightweight and easy to set up
+## 💻 How to Run Locally
 
-🛠 Tech Stack
+```bash
+git clone https://github.com/YourUsername/FocusFlowAI.git
+cd "FocusFlow AI"
+python -m venv venv
+venv\Scripts\activate  # On Windows
+pip install -r requirements.txt
+streamlit run app.py
+Deployment
+This app is designed for Streamlit Cloud:
 
-Backend: FastAPI (for sentiment analysis API)
+Connect your GitHub repo
 
-Frontend: Streamlit (for user interaction)
+Main file: app.py
 
-NLP: NLTK (VADER sentiment analysis)
+It will automatically deploy!
 
-API Communication: Requests
+📌 Author
+Built with ❤️ by Mercy Jacob
 
-## 📌 Installation & Setup
-1️⃣ Clone the Repository
-   ```
-   git clone https://github.com/mruna18/ai-mood-tracker.git
-   cd ai-mood-tracker
-   ```
-2️⃣ Install Dependencies
-   ```
-   pip install fastapi streamlit nltk requests pillow uvicorn
-```
-3️⃣ Run the FastAPI Backend
-   ```
-   uvicorn main:app --reload
-```
-It should run on http://127.0.0.1:8000
+yaml
+Copy
+Edit
 
-4️⃣ Run the Streamlit Frontend
-   ```
-   streamlit run app.py
-```
-It should open in your browser.
+---
 
-🔬 How It Works
-- User enters text in the Streamlit app.
-- FastAPI backend processes the text using NLTK's SentimentIntensityAnalyzer.
-- Mood is determined as Positive 😃, Negative 😢, or Neutral 😐.
-- Result is displayed with an emoji in the UI.
+## ✅ 3. Final Git Commands ✅
 
-
+```bash
+git init
+git add .
+git commit -m "🎉 Initial commit of FocusFlow AI app"
+git remote add origin https://github.com/YourUsername/FocusFlowAI.git
+git branch -M main
+git push -u origin main
