@@ -136,33 +136,27 @@ st.markdown(
 )
 
 # ────────────────────
-# User Authentication
+# Login Flow with Clean Page
 # ────────────────────
 
-if 'username' not in st.session_state:
-    username_input = st.text_input("Enter your name to start:", key="username_input")
-    if username_input:
-        st.session_state['username'] = username_input.strip().title()
-        st.experimental_rerun()
+if "username" not in st.session_state:
+    username = st.text_input("👤 Enter your name to start:", key="username_input")
+    if username.strip():
+        st.session_state["username"] = username.strip().title()
+        st.rerun()
     st.stop()
-else:
-    username = st.session_state['username']
-    st.sidebar.markdown(f"### 👋 Welcome, {username}!")
 
-    menu = st.sidebar.radio("📌 Menu", [
-        "Mood Analyzer", "Daily Journal", "Habit Tracker",
-        "Burnout Checker", "Data Dashboard", "Reminders (Coming Soon)", "About"
-    ])
-
-    # App main sections would go here (same structure you had)
-    st.write(f"## Welcome {username}, your personal clarity assistant is ready ✨")
-
+username = st.session_state["username"]
+st.sidebar.markdown(f"### 👋 Welcome, **{username}**")
 
 # ────────────────────
-# Menu Navigation
+# Menu
 # ────────────────────
 
-menu = st.sidebar.radio("📌 Menu", ["Mood Analyzer", "Daily Journal", "Habit Tracker", "Burnout Checker", "Data Dashboard", "Reminders (Coming Soon)", "About"])
+menu = st.sidebar.radio("📌 Menu", [
+    "Mood Analyzer", "Daily Journal", "Habit Tracker",
+    "Burnout Checker", "Data Dashboard", "Reminders (Coming Soon)", "About"
+])
 
 # ────────────────────
 # Mood Analyzer
