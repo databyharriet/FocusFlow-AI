@@ -6,7 +6,6 @@ import os
 import pandas as pd
 from transformers import pipeline
 from fpdf import FPDF
-from app.utils import analyze_mood as analyze_mood_nltk
 
 # ────────────────────
 # AI Tip Generator
@@ -94,7 +93,7 @@ def generate_pdf(df, filename, title):
     pdf.output(filename)
 
 # ────────────────────
-# Streamlit Setup
+# Streamlit Theme
 # ────────────────────
 
 st.set_page_config("FocusFlow AI", layout="wide")
@@ -109,38 +108,23 @@ with st.sidebar.expander("🎨 Theme Settings", expanded=False):
         index=0,
     )
 
-# ✅ Now, the style block comes AFTER defining the variables
 st.markdown(
     f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family={font_family.replace(" ", "+")}&display=swap');
-
     html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], [data-testid="block-container"], .main {{
         font-family: '{font_family}', sans-serif !important;
         color: {text_color} !important;
         background-color: {bg_color} !important;
     }}
-
     * {{
         font-family: '{font_family}', sans-serif !important;
         color: {text_color} !important;
     }}
-
     input, textarea, select, button, label {{
         font-family: '{font_family}', sans-serif !important;
         color: {text_color} !important;
     }}
-
-    .stMarkdown, .stText, .stTitle, .stHeader, .stSubheader, .stCaption, .stMetric, .stDataFrame, .stTable {{
-        font-family: '{font_family}', sans-serif !important;
-        color: {text_color} !important;
-    }}
-
-    [data-testid="stSidebarContent"] *, .sidebar-content, .sidebar-section {{
-        font-family: '{font_family}', sans-serif !important;
-        color: {text_color} !important;
-    }}
-
     .stButton>button {{
         background-color: {accent_color} !important;
         color: white !important;
@@ -152,7 +136,6 @@ st.markdown(
     .stButton>button:hover {{
         filter: brightness(1.1);
     }}
-
     footer {{ visibility: hidden; }}
     </style>
     """,
@@ -160,14 +143,14 @@ st.markdown(
 )
 
 # ────────────────────
-# Login Flow with Clean Page
+# Login Page
 # ────────────────────
 
 if "username" not in st.session_state:
-    username = st.text_input("👤 Enter your name to start:", key="username_input")
+    username = st.text_input("👤 Enter your name to start:")
     if username.strip():
         st.session_state["username"] = username.strip().title()
-        st.rerun()
+        st.experimental_rerun()
     st.stop()
 
 username = st.session_state["username"]
@@ -215,13 +198,16 @@ elif menu == "Daily Journal":
         journal_data.append({"timestamp": ts, "content": text})
         with st.expander(f"🗕️ {ts}"):
             st.write(text)
-            if st.button(f"❌ Delete", key=ts):
+            if st.button(f"❌ Delete {ts}", key=f"delete_{ts}"):
                 delete_journal(username, ts)
                 st.success(f"Deleted {ts}")
                 st.experimental_rerun()
     if journal_data:
         jdf = pd.DataFrame(journal_data)
-        st.download_button("📥 Download Journals CSV", jdf.to_csv(index=False), file_name="journal_entries.csv")
+        st.download_button("📥 Download Journals (CSV)", jdf.to_csv(index=False), file_name="journals.csv")
+        pdf_filename = f"{username}_journals.pdf"
+        generate_pdf(jdf, pdf_filename, f"{username}'s Journals")
+        st.download_button("📄 Download Journals (PDF)", open(pdf_filename, "rb").read(), file_name=pdf_filename)
 
 # ────────────────────
 # Habit Tracker
@@ -239,8 +225,13 @@ elif menu == "Habit Tracker":
     file = f"habit_data/{username}/habit_log.csv"
     if os.path.exists(file):
         df = pd.read_csv(file)
-        st.subheader("📂 Recent Habit Logs")
+        st.subheader("📂 Habit Logs")
         st.dataframe(df.tail(10))
+        if not df.empty:
+            st.download_button("📥 Download Habit Log (CSV)", df.to_csv(index=False), file_name="habit_log.csv")
+            pdf_filename = f"{username}_habit_log.pdf"
+            generate_pdf(df, pdf_filename, f"{username}'s Habit Log")
+            st.download_button("📄 Download Habit Log (PDF)", open(pdf_filename, "rb").read(), file_name=pdf_filename)
 
 # ────────────────────
 # Burnout Checker
