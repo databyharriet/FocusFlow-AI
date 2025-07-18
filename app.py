@@ -150,7 +150,7 @@ if "username" not in st.session_state:
     username = st.text_input("👤 Enter your name to start:")
     if username.strip():
         st.session_state["username"] = username.strip().title()
-        st.experimental_rerun()
+        st.rerun()
     st.stop()
 
 username = st.session_state["username"]
@@ -201,7 +201,7 @@ elif menu == "Daily Journal":
             if st.button(f"❌ Delete {ts}", key=f"delete_{ts}"):
                 delete_journal(username, ts)
                 st.success(f"Deleted {ts}")
-                st.experimental_rerun()
+                st.rerun()
     if journal_data:
         jdf = pd.DataFrame(journal_data)
         st.download_button("📥 Download Journals (CSV)", jdf.to_csv(index=False), file_name="journals.csv")
@@ -283,14 +283,10 @@ elif menu == "About":
     st.markdown("""
     **FocusFlow AI** is your personal clarity assistant.
 
-    ✅ Journal your thoughts
-
-    ✅ Track sleep & productivity
-    
-    ✅ AI mood analysis
-    
-    ✅ Burnout prevention
-    
+    ✅ Journal your thoughts  
+    ✅ Track sleep & productivity  
+    ✅ AI mood analysis  
+    ✅ Burnout prevention  
     ✅ Data insights
 
     Built with ❤️ by Mercy Jacob
